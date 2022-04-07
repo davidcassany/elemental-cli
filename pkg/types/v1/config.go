@@ -152,9 +152,19 @@ func (pl PartitionList) GetByName(name string) *Partition {
 	return nil
 }
 
+// LiveISO represents the configurations needed for a live ISO image
+type LiveISO struct {
+	RootFS []string `yaml:"rootfs,omitempty" mapstructure:"rootfs"`
+	UEFI   []string `yaml:"uefi,omitempty" mapstructure:"uefi"`
+	Image  []string `yaml:"isoimage,omitempty" mapstructure:"isoimage"`
+	Label  string   `yaml:"label,omitempty" mapstructure:"label"`
+}
+
 // BuildConfig represents the config we need for building isos, raw images, artifacts
 type BuildConfig struct {
-	Label string `yaml:"label,omitempty" mapstructure:"label"`
+	ISO  *LiveISO `yaml:"iso,omitempty" mapstructure:"iso"`
+	Date bool     `yaml:"date,omitempty" mapstructure:"date"`
+	Name string   `yaml:"name,omitempty" mapstructure:"name"`
 	// Generic runtime configuration
 	Config
 }
