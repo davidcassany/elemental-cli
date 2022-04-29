@@ -69,6 +69,13 @@ func UnmarshalerHook() mapstructure.DecodeHookFunc {
 	}
 }
 
+func setDecoder(config *mapstructure.DecoderConfig) {
+	// Make sure we zero fields before applying them, this is relevant for slices
+	// so we do not merge with any already present value and directly apply whatever
+	// we got form configs.
+	config.ZeroFields = true
+}
+
 func ReadConfigBuild(configDir string, mounter mount.Interface) (*v1.BuildConfig, error) {
 	logger := v1.NewLogger()
 	cfg := config.NewBuildConfig(
@@ -87,12 +94,7 @@ func ReadConfigBuild(configDir string, mounter mount.Interface) (*v1.BuildConfig
 	viperReadEnv()
 
 	// unmarshal all the vars into the config object
-	err := viper.Unmarshal(cfg, func(config *mapstructure.DecoderConfig) {
-		// Make sure we zero fields before applying them, this is relevant for slices
-		// so we do not merge with any already present value and directly apply whatever
-		// we got form configs.
-		config.ZeroFields = true
-	})
+	err := viper.Unmarshal(cfg, setDecoder)
 	if err != nil {
 		cfg.Logger.Warnf("error unmarshalling config: %s", err)
 	}
@@ -147,7 +149,7 @@ func ReadConfigRun(configDir string, mounter mount.Interface) (*v1.RunConfig, er
 	viperReadEnv()
 
 	// unmarshal all the vars into the config object
-	err := viper.Unmarshal(cfg)
+	err := viper.Unmarshal(cfg, setDecoder)
 	if err != nil {
 		cfg.Logger.Warnf("error unmarshalling config: %s", err)
 	}
@@ -202,7 +204,7 @@ func ReadConfigRunNew(configDir string, mounter mount.Interface) (*v1.RunConfigN
 	viperReadEnv()
 
 	// unmarshal all the vars into the config object
-	err := viper.Unmarshal(cfg, viper.DecodeHook(
+	err := viper.Unmarshal(cfg, setDecoder, viper.DecodeHook(
 		mapstructure.ComposeDecodeHookFunc(
 			UnmarshalerHook(),
 			mapstructure.StringToTimeDurationHookFunc(),
