@@ -32,7 +32,6 @@ func NewResetCmd(root *cobra.Command, addCheckRoot bool) *cobra.Command {
 		Short: "elemental reset OS",
 		Args:  cobra.ExactArgs(0),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			_ = viper.BindPFlags(cmd.Flags())
 			if addCheckRoot {
 				return CheckRoot()
 			}
@@ -45,8 +44,7 @@ func NewResetCmd(root *cobra.Command, addCheckRoot bool) *cobra.Command {
 			}
 			mounter := mount.New(path)
 
-			cfg, err := config.ReadConfigRun(viper.GetString("config-dir"), mounter)
-
+			cfg, err := config.ReadConfigRun(viper.GetString("config-dir"), cmd.Flags(), mounter)
 			if err != nil {
 				cfg.Logger.Errorf("Error reading config: %s\n", err)
 			}
@@ -55,21 +53,29 @@ func NewResetCmd(root *cobra.Command, addCheckRoot bool) *cobra.Command {
 				return err
 			}
 
+			// Adapt 'docker-image' and 'directory'  deprecated flags to 'system' syntax
+			adaptDockerImageAndDirectoryFlagsToSystem()
+
+			// TODO
+			// Map environment variables to sub viper keys
+			keyEnvMap := map[string]string{}
+
 			cmd.SilenceUsage = true
-			err = action.ResetSetup(cfg)
+			spec, err := config.ReadResetSpec(cfg, cmd.Flags(), keyEnvMap)
 			if err != nil {
+				cfg.Logger.Errorf("invalid reset command setup %v", err)
 				return err
 			}
 
 			cfg.Logger.Infof("Reset called")
-
-			return action.ResetRun(cfg)
+			reset := action.NewResetAction(cfg, spec)
+			return reset.Run()
 		},
 	}
 	root.AddCommand(c)
 	c.Flags().BoolP("tty", "", false, "Add named tty to grub")
 	c.Flags().BoolP("reset-persistent", "", false, "Clear persistent partitions")
-	addSharedInstallUpgradeFlags(c)
+	addResetFlags(c)
 	return c
 }
 
