@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 SUSE LLC
+Copyright © 2022 - 2023 SUSE LLC
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -239,7 +239,6 @@ var _ = Describe("Types", Label("types", "config"), func() {
 
 					spec, err := config.NewResetSpec(*c)
 					Expect(err).ShouldNot(HaveOccurred())
-					Expect(spec.Active.Source.Value()).To(Equal(constants.IsoBaseTree))
 					Expect(spec.Partitions.EFI.MountPoint).To(Equal(constants.EfiDir))
 				})
 				It("sets reset defaults on bios from non-squashed recovery", func() {

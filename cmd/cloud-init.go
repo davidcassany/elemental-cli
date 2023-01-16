@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 SUSE LLC
+Copyright © 2022 - 2023 SUSE LLC
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ limitations under the License.
 package cmd
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 
 	"k8s.io/mount-utils"
@@ -54,7 +54,7 @@ func NewCloudInitCmd(root *cobra.Command) *cobra.Command {
 			}
 
 			if fromStdin {
-				std, err := ioutil.ReadAll(os.Stdin)
+				std, err := io.ReadAll(os.Stdin)
 				if err != nil {
 					return elementalError.NewFromError(err, elementalError.ReadFile)
 				}

@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 SUSE LLC
+Copyright © 2022 - 2023 SUSE LLC
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -222,6 +222,15 @@ const HookPostReset = 73
 
 // Error occurred during post-install hook
 const HookPostInstall = 74
+
+// Error occurred while preparing the image root tree
+const DeployImgTree = 75
+
+// Error occurred while creating the OS filesystem image
+const CreateImgFromTree = 76
+
+// Error occurred while copying the filesystem image and setting new labels
+const CopyFileImg = 77
 
 // Unknown error
 const Unknown int = 255

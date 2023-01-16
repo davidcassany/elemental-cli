@@ -1,5 +1,5 @@
 /*
-   Copyright © 2022 SUSE LLC
+   Copyright © 2022 - 2023 SUSE LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -145,7 +145,7 @@ var _ = Describe("Install action tests", func() {
 			spec = conf.NewInstallSpec(config.Config)
 			spec.Active.Size = 16
 
-			grubCfg := filepath.Join(spec.Active.MountPoint, constants.GrubConf)
+			grubCfg := filepath.Join(constants.WorkingImgDir, constants.GrubConf)
 			err = utils.MkdirAll(fs, filepath.Dir(grubCfg), constants.DirPerm)
 			Expect(err).To(BeNil())
 			_, err = fs.Create(grubCfg)

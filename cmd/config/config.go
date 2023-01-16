@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 SUSE LLC
+Copyright © 2022 - 2023 SUSE LLC
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -351,7 +350,7 @@ func configLogger(log v1.Logger, vfs v1.FS) {
 		}
 	} else { // no logfile
 		if viper.GetBool("quiet") { // quiet is enabled so discard all logging
-			log.SetOutput(ioutil.Discard)
+			log.SetOutput(io.Discard)
 		} else { // default to stdout
 			log.SetOutput(os.Stdout)
 		}
