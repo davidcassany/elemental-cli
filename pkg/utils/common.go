@@ -33,8 +33,9 @@ import (
 
 	"github.com/distribution/distribution/reference"
 	"github.com/joho/godotenv"
-	"github.com/rancher-sandbox/grsync"
+	eleError "github.com/rancher/elemental-cli/pkg/error"
 	"github.com/twpayne/go-vfs"
+	"github.com/zloylos/grsync"
 
 	cnst "github.com/rancher/elemental-cli/pkg/constants"
 	v1 "github.com/rancher/elemental-cli/pkg/types/v1"
