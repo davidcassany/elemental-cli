@@ -38,23 +38,22 @@ func NewGreenLiveBootLoader(cfg *v1.BuildConfig, spec *v1.LiveISO) *GreenLiveBoo
 
 func (g *GreenLiveBootLoader) PrepareEFI(rootDir, uefiDir string) error {
 	const (
-		grubEfiImageX86   = "/usr/share/grub2/x86_64-efi/grub.efi"
+		//grubEfiImageX86   = "/usr/share/grub2/x86_64-efi/grub.efi"
+		grubEfiImageX86   = "/usr/lib/grub/x86_64-efi-signed/grubx64.efi.signed"
 		grubEfiImageArm64 = "/usr/share/grub2/arm64-efi/grub.efi"
-		shimBasePathX86   = "/usr/share/efi/x86_64"
+		//shimBasePathX86   = "/usr/share/efi/x86_64"
+		shimBasePathX86   = "/usr/lib/shim"
 		shimBasePathArm64 = "/usr/share/efi/aarch64"
-		shimImg           = "shim.efi"
-		mokManager        = "MokManager.efi"
+		//shimImg           = "shim.efi"
+		shimImg = "shimx64.efi.signed"
+		//mokManager = "MokManager.efi"
+		mokManager = "mmx64.efi"
 	)
 
 	err := utils.MkdirAll(g.buildCfg.Fs, filepath.Join(uefiDir, efiBootPath), constants.DirPerm)
 	if err != nil {
 		return err
 	}
-
-	// _, arch, _, err := v1.ParsePlatform(g.buildCfg.Platform)
-	// if err != nil {
-	// 	return err
-	// }
 
 	switch g.buildCfg.Platform.Arch {
 	case constants.ArchAmd64, constants.Archx86:
@@ -88,7 +87,7 @@ func (g *GreenLiveBootLoader) copyEfiFiles(uefiDir, shimImg, mokManager, grubImg
 	if err != nil {
 		return err
 	}
-	err = utils.CopyFile(g.buildCfg.Fs, grubImg, filepath.Join(uefiDir, efiBootPath))
+	err = utils.CopyFile(g.buildCfg.Fs, grubImg, filepath.Join(uefiDir, efiBootPath, "grubx64.efi"))
 	if err != nil {
 		return err
 	}

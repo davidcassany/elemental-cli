@@ -27,6 +27,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -472,6 +473,29 @@ func FindFileWithPrefix(fs v1.FS, path string, prefixes ...string) (string, erro
 		}
 	}
 	return "", fmt.Errorf("No file found with prefixes: %v", prefixes)
+}
+
+// FindPatternInPath recursively looks for a path matching the given patterns under the given root.
+// Returns the path of the first match or error if no match if found.
+func FindPatternInPath(vfs v1.FS, root string, patterns ...string) (string, error) {
+	var match string
+	var err error
+
+	for _, pattern := range patterns {
+		ptrn := regexp.MustCompile(pattern)
+		err = WalkDirFs(vfs, root, func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			match = filepath.Join(root, d.Name())
+			if ptrn.Match([]byte(match)) {
+				return filepath.SkipDir
+			}
+			match = ""
+			return nil
+		})
+	}
+	return match, err
 }
 
 // CalcFileChecksum opens the given file and returns the sha256 checksum of it.
